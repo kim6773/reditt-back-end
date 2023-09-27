@@ -23,13 +23,13 @@ model User {
 model Post {
   id          String     @id @default(uuid())
   text        String
-  title       String
-  user        User       @relation(fields: [userId], references: [id])
+  title       String?
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  subreddit   Subreddit  @relation(fields: [subredditId], references: [id])
+  subreddit   Subreddit  @relation(fields: [subredditId], references: [id], onDelete: Cascade)
   parentId    String?
   children    Post[]     @relation("parentChild")
-  parent      Post?      @relation("parentChild", fields: [parentId], references: [id])
+  parent      Post?      @relation("parentChild", fields: [parentId], references: [id], onDelete: Cascade)
   subredditId String
   upvotes     Upvote[]
   downvotes   Downvote[]
@@ -38,16 +38,16 @@ model Post {
 model Subreddit {
   id     String @id @default(uuid())
   name   String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   posts  Post[]
 }
 
 model Upvote {
   id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
   @@unique([userId, postId]) // Adds unique constraint to specify that a combination of userId and postId must be unique for each row in the Upvote table, effectively preventing a user from upvoting the same post multiple times
@@ -55,9 +55,9 @@ model Upvote {
 
 model Downvote {
   id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
   @@unique([userId, postId])

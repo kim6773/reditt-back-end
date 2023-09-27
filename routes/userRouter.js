@@ -93,3 +93,51 @@ userRouter.get("/token", async (req, res) => {
     });
   }
 });
+// Update user information
+userRouter.put("/:userId", async (req, res) => {
+  const { userId } = req.params.userId;
+  const { username, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: username,
+      },
+    });
+
+    if (!user) {
+      return res.send({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    if (req.user.id !== user.id) {
+      return res.send({
+        success: false,
+        error: "User is not authorized to update this profile",
+      });
+    }
+
+    // Update user information
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
+
+    res.send({
+      success: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      error: error.message,
+    });
+  }
+});

@@ -95,7 +95,7 @@ userRouter.get("/token", async (req, res) => {
 });
 // Update user information
 userRouter.put("/:userId", async (req, res) => {
-  const { userId } = req.params.userId;
+  const { userId } = req.params;
   const { username, password } = req.body;
 
   try {
